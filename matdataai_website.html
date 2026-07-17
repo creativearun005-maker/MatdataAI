@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatdataAI — Transforming Bharat's Electoral Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A1628;
+  --navy2:#101415;
+  --navy3:#0b0f10;
+  --card:#162235;
+  --border:#22334f;
+  --saffron:#fe6b00;
+  --saffron2:#ff8c33;
+  --saffron-light:#ffb693;
+  --green:#88d982;
+  --green2:#2E7D32;
+  --white:#ffffff;
+  --text:#e0e3e5;
+  --text2:#c5c6cd;
+  --text3:#8f9097;
+  --text4:#bbc7df;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--navy2);
+  color:var(--text);
+  font-family:'Be Vietnam Pro',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(16,20,21,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--navy);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;color:var(--saffron);
+  font-family:'JetBrains Mono',monospace;
+}
+.nav-logo-text{font-size:15px;font-weight:800;color:var(--white)}
+.nav-logo-sub{font-size:9px;color:var(--green);letter-spacing:2px;font-family:'JetBrains Mono',monospace}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--white)}
+.nav-demo{
+  background:var(--saffron);color:var(--white);
+  padding:9px 20px;border-radius:10px;font-weight:700;
+  font-size:14px;cursor:pointer;border:none;
+  transition:background 0.2s;
+}
+.nav-demo:hover{background:var(--saffron2)}
+/* ── HERO ── */
+#hero{
+  max-width:1200px;margin:0 auto;
+  padding:120px 24px 80px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(254,107,0,0.12);
+  border:1px solid rgba(254,107,0,0.3);
+  font-size:11px;font-weight:700;
+  color:var(--saffron-light);
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-badge::before{content:'✦';margin-right:4px}
+h1{
+  font-size:clamp(36px,4vw,58px);font-weight:900;
+  color:var(--white);line-height:1.1;
+  letter-spacing:-1px;margin-bottom:20px;
+}
+h1 span{
+  background:linear-gradient(90deg,var(--saffron),var(--saffron-light),var(--white));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  font-size:17px;color:var(--text2);
+  line-height:1.7;margin-bottom:36px;max-width:480px;
+}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--saffron);color:var(--white);
+  padding:14px 28px;border-radius:12px;font-weight:700;
+  font-size:15px;cursor:pointer;border:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.25s;text-decoration:none;
+  box-shadow:0 8px 24px rgba(254,107,0,0.3);
+}
+.btn-primary:hover{background:var(--saffron2);transform:translateY(-2px)}
+.btn-primary::after{content:'→';transition:transform 0.2s}
+.btn-primary:hover::after{transform:translateX(4px)}
+.btn-secondary{
+  background:var(--card);color:var(--text4);
+  padding:14px 28px;border-radius:12px;font-weight:700;
+  font-size:15px;cursor:pointer;border:1px solid var(--border);
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.25s;text-decoration:none;
+}
+.btn-secondary:hover{background:#1e3a5f;color:var(--white)}
+.hero-visual{
+  border-radius:20px;overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--navy);
+  box-shadow:0 24px 64px rgba(0,0,0,0.5);
+  position:relative;cursor:pointer;
+  transition:border-color 0.3s;
+}
+.hero-visual:hover{border-color:rgba(254,107,0,0.4)}
+.hero-visual-img{
+  width:100%;height:380px;object-fit:cover;
+  background:linear-gradient(135deg,#0d2145,#1a3a6b,#0a1628);
+  display:flex;align-items:center;justify-content:center;
+  font-size:80px;transition:transform 0.5s;
+}
+.hero-visual:hover .hero-visual-img{transform:scale(1.03)}
+.hero-visual-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,var(--navy) 0%,transparent 50%);
+}
+.hero-live-badge{
+  position:absolute;bottom:20px;left:20px;
+  background:rgba(22,34,53,0.92);backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+}
+.live-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--green);
+  animation:ping 1.5s infinite;
+}
+@keyframes ping{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
+.live-text-top{font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.live-text-bot{font-size:12px;font-weight:700;color:var(--white)}
+/* ── AMAN STORY ── */
+#problem{background:var(--navy3);border-top:1px solid rgba(69,71,76,0.3);padding:80px 24px}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:3px;
+  color:var(--saffron);text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;
+  margin-bottom:12px;
+}
+.section-title{font-size:clamp(28px,3.5vw,42px);font-weight:800;color:var(--white);margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--text2);max-width:600px;line-height:1.7;margin-bottom:48px}
+.aman-story{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:48px;align-items:start;margin-bottom:64px;
+}
+.aman-quote{
+  background:var(--card);border:1px solid var(--border);
+  border-left:4px solid var(--saffron);
+  border-radius:16px;padding:28px;
+  font-size:16px;color:var(--text2);
+  line-height:1.7;font-style:italic;margin-bottom:24px;
+}
+.aman-quote cite{
+  display:block;margin-top:16px;
+  font-size:13px;font-weight:700;
+  color:var(--saffron);font-style:normal;
+}
+.aman-narrative{
+  font-size:15px;color:var(--text2);line-height:1.8;
+  background:rgba(22,34,53,0.4);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+}
+.aman-narrative strong{color:var(--white)}
+.pain-cards{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+.pain-card{
+  background:rgba(230,57,70,0.06);
+  border:1px solid rgba(230,57,70,0.2);
+  border-radius:14px;padding:24px;
+  transition:border-color 0.3s;
+}
+.pain-card:hover{border-color:rgba(230,57,70,0.4)}
+.pain-icon{font-size:28px;margin-bottom:12px}
+.pain-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px}
+.pain-body{font-size:13px;color:var(--text2);line-height:1.6}
+.pain-tag{
+  display:inline-block;margin-top:10px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  color:rgba(230,57,70,0.8);letter-spacing:1px;
+  text-transform:uppercase;
+}
+/* ── HOW IT WORKS ── */
+#howitworks{padding:80px 24px;background:var(--navy2)}
+.steps{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:24px;margin-bottom:64px;
+}
+.step{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.3s,transform 0.3s;
+}
+.step:hover{border-color:var(--saffron);transform:translateY(-4px)}
+.step::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--saffron);transform:scaleX(0);
+  transition:transform 0.3s;transform-origin:left;
+}
+.step:hover::before{transform:scaleX(1)}
+.step-num{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(254,107,0,0.15);border:1px solid rgba(254,107,0,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;color:var(--saffron);
+  font-family:'JetBrains Mono',monospace;
+  margin-bottom:16px;
+}
+.step-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:8px}
+.step-body{font-size:13px;color:var(--text2);line-height:1.6}
+.demo-box{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.demo-input,.demo-output{
+  background:var(--navy3);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+}
+.demo-label{
+  padding:12px 20px;border-bottom:1px solid var(--border);
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+  font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.demo-label span{color:var(--text3)}
+.demo-label .badge{
+  font-size:10px;padding:3px 10px;border-radius:20px;
+  background:rgba(136,217,130,0.15);color:var(--green);
+  border:1px solid rgba(136,217,130,0.3);
+}
+.demo-content{padding:20px}
+.voter-entry-demo{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px;background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:10px;margin-bottom:10px;
+}
+.voter-face{
+  width:48px;height:58px;background:rgba(255,255,255,0.08);
+  border-radius:6px;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;font-size:22px;
+}
+.voter-info{font-size:11px;font-family:'JetBrains Mono',monospace}
+.voter-info .vi-id{color:var(--saffron);font-weight:700;margin-bottom:4px}
+.voter-info .vi-line{color:var(--text2);margin-bottom:2px}
+.analyzing{
+  text-align:center;padding:16px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--green);
+}
+.analyzing::before{content:'⟳ ';animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.excel-table{width:100%;border-collapse:collapse;font-size:11px}
+.excel-table th{
+  background:#1F4E79;color:var(--white);
+  padding:8px 10px;text-align:left;font-weight:700;
+}
+.excel-table td{
+  padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.06);
+  color:var(--text2);
+}
+.excel-table tr:nth-child(even) td{background:rgba(22,34,53,0.5)}
+.dl-btn{
+  width:100%;margin-top:16px;
+  background:var(--green2);color:var(--white);
+  padding:12px;border-radius:10px;border:none;
+  font-weight:700;font-size:13px;cursor:pointer;
+  transition:background 0.2s;
+}
+.dl-btn:hover{background:#1a5c19}
+/* ── FEATURES ── */
+#features{background:var(--navy3);border-top:1px solid rgba(69,71,76,0.3);padding:80px 24px}
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.feat-card{
+  background:rgba(22,34,53,0.5);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  transition:border-color 0.3s,transform 0.3s;
+  position:relative;overflow:hidden;
+}
+.feat-card:hover{border-color:rgba(254,107,0,0.35);transform:translateY(-4px)}
+.feat-card.highlight{
+  background:rgba(254,107,0,0.08);
+  border-color:rgba(254,107,0,0.3);
+}
+.feat-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+  background:rgba(254,107,0,0.1);border:1px solid rgba(254,107,0,0.25);
+}
+.feat-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:10px}
+.feat-body{font-size:13px;color:var(--text2);line-height:1.6}
+/* ── PRICING ── */
+#pricing{padding:80px 24px;background:var(--navy2)}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.price-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:36px;
+  transition:border-color 0.3s;
+}
+.price-card.popular{
+  border-color:var(--saffron);
+  background:rgba(254,107,0,0.06);
+}
+.price-badge{
+  display:inline-block;padding:4px 12px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:16px;
+  font-family:'JetBrains Mono',monospace;
+}
+.price-badge.pop{background:rgba(254,107,0,0.2);color:var(--saffron)}
+.price-badge.ent{background:rgba(136,217,130,0.15);color:var(--green)}
+.price-name{font-size:18px;font-weight:800;color:var(--white);margin-bottom:8px}
+.price-desc{font-size:13px;color:var(--text2);margin-bottom:24px}
+.price-amount{
+  font-size:48px;font-weight:900;color:var(--white);
+  font-family:'JetBrains Mono',monospace;line-height:1;
+  margin-bottom:6px;
+}
+.price-amount span{font-size:16px;color:var(--text3)}
+.price-period{font-size:12px;color:var(--text3);margin-bottom:28px}
+.price-features{list-style:none;margin-bottom:28px}
+.price-features li{
+  padding:8px 0;font-size:13px;color:var(--text2);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  display:flex;align-items:center;gap:10px;
+}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700}
+.price-cta{
+  width:100%;padding:14px;border-radius:12px;
+  font-weight:700;font-size:14px;cursor:pointer;
+  border:none;transition:all 0.25s;
+}
+.price-cta.orange{background:var(--saffron);color:var(--white)}
+.price-cta.orange:hover{background:var(--saffron2)}
+.price-cta.outline{background:transparent;color:var(--white);border:2px solid var(--border)}
+.price-cta.outline:hover{border-color:var(--white)}
+.pricing-note{
+  text-align:center;margin-top:32px;
+  display:flex;gap:32px;justify-content:center;
+  flex-wrap:wrap;
+}
+.pricing-note span{
+  font-size:13px;color:var(--text3);
+  display:flex;align-items:center;gap:6px;
+}
+/* ── FOOTER ── */
+footer{
+  background:var(--navy3);border-top:1px solid rgba(69,71,76,0.3);
+  padding:64px 24px 32px;
+}
+.footer-grid{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:48px;margin-bottom:48px;
+}
+.footer-brand p{font-size:14px;color:var(--text3);line-height:1.7;margin-top:12px;max-width:260px}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--saffron);text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:16px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{color:var(--text3);text-decoration:none;font-size:14px;transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{
+  max-width:1200px;margin:0 auto;
+  padding-top:24px;border-top:1px solid rgba(69,71,76,0.3);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:13px;color:var(--text3);flex-wrap:wrap;gap:12px;
+}
+.flag-strip{height:3px;background:linear-gradient(90deg,#FF6B00 33.3%,#ffffff 33.3% 66.6%,#128807 66.6%)}
+/* ── INDIA STRIP ── */
+.india-strip{
+  background:var(--navy3);
+  padding:20px 24px;border-top:1px solid var(--border);
+  text-align:center;
+}
+.india-strip p{font-size:14px;color:var(--text3)}
+.india-strip strong{color:var(--white)}
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  #hero{grid-template-columns:1fr;padding:100px 16px 60px;gap:40px}
+  .hero-visual{display:none}
+  .aman-story{grid-template-columns:1fr}
+  .pain-cards{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .demo-box{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  nav .nav-links{display:none}
+}
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="flag-strip"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">M.</div>
+    <div>
+      <div class="nav-logo-text">MatdataAI</div>
+      <div class="nav-logo-sub">BUILT FOR BHARAT 🇮🇳</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#howitworks">How It Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <button class="nav-demo" onclick="document.getElementById('howitworks').scrollIntoView({behavior:'smooth'})">Demo</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="reveal">
+    <div class="hero-badge">Sovereign AI Document Synthesis</div>
+    <h1>Transforming Bharat's<br><span>Electoral Data</span></h1>
+    <p class="hero-sub">Convert scanned Hindi voter list PDFs into structured, filterable Excel data — ward-wise, caste-wise, house-wise. Near zero cost.</p>
+    <div class="hero-btns">
+      <a class="btn-primary" href="#howitworks">Try Free Demo</a>
+      <a class="btn-secondary" href="#features">Learn How It Works</a>
+    </div>
+  </div>
+  <div class="reveal">
+    <div class="hero-visual">
+      <div class="hero-visual-img">📊</div>
+      <div class="hero-visual-overlay"></div>
+      <div class="hero-live-badge">
+        <div class="live-dot"></div>
+        <div>
+          <div class="live-text-top">CONSTITUENCY LIVE ANALYSIS</div>
+          <div class="live-text-bot">Rampur Maniharaan, UP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM / AMAN STORY -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Pain Points</div>
+    <h2 class="section-title reveal">The Struggle of Every Candidate</h2>
+    <p class="section-sub reveal">Winning an election in India shouldn't be a battle against paperwork. Legacy systems are holding back the future of governance.</p>
+
+    <div class="aman-story reveal">
+      <div>
+        <div class="aman-quote">
+          "I spent 14 hours a day just trying to find one name. The data was there, but it was trapped in dead paper."
+          <cite>— Aman, Independent Candidate (UP)</cite>
+        </div>
+        <div class="aman-narrative">
+          <strong>Aman's Story</strong><br><br>
+          Aman, an independent candidate from a bustling constituency in Uttar Pradesh, found his campaign stalled before it even began. Every morning, his team faced a mountain of over 20,000 pages of PDF voter lists.<br><br>
+          They spent weeks manually highlighting names, trying to sort voters by street, and guessing caste demographics. The "voter list" wasn't a resource — it was a prison. While his opponents used expensive consultancies, Aman had nothing.
+        </div>
+      </div>
+      <div class="pain-cards">
+        <div class="pain-card">
+          <div class="pain-icon">🚫</div>
+          <div class="pain-title">Can't Sort</div>
+          <div class="pain-body">Paper lists are static. No way to re-order names by street, ward, or house number without manual re-typing.</div>
+          <div class="pain-tag">△ Static Data</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">👥</div>
+          <div class="pain-title">No Caste Filter</div>
+          <div class="pain-body">Identifying key voter blocks and demographic shifts takes weeks of grueling, error-prone manual analysis.</div>
+          <div class="pain-tag">○ Time Sink</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">🔍</div>
+          <div class="pain-title">Search is Impossible</div>
+          <div class="pain-body">Hunting for a specific name or religion across 1000s of pages is like looking for a needle in a haystack.</div>
+          <div class="pain-tag">⊘ Hard Search</div>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">💸</div>
+          <div class="pain-title">High Cost</div>
+          <div class="pain-body">Agents charge ₹1,000/file × 400 files = ₹4,00,000 per candidate, per election — just for data ECI gave for free.</div>
+          <div class="pain-tag">↗ High Burn</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="howitworks">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">The Solution</div>
+    <h2 class="section-title reveal">From PDF to Excel in 4 Simple Steps</h2>
+    <p class="section-sub reveal">Digitize complex electoral documents with industry-leading Hindi OCR accuracy. Built for speed, scaled for Bharat.</p>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Upload PDF</div>
+        <div class="step-body">Drop your scanned Hindi voter list files directly into our secure processing zone.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">AI Reads</div>
+        <div class="step-body">Our neural engine recognizes Devanagari text with contextual awareness and field detection.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Extract Data</div>
+        <div class="step-body">Names, ages, house numbers, and phone markers are parsed into clean semantic categories.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Get Excel</div>
+        <div class="step-body">Download your structured data instantly in Excel format — ready for filtering and analysis.</div>
+      </div>
+    </div>
+
+    <div class="demo-box reveal">
+      <div class="demo-input">
+        <div class="demo-label">
+          <span>ORIGINAL DOCUMENT</span>
+          <span class="badge">ANALYZING...</span>
+        </div>
+        <div class="demo-content">
+          <div class="voter-entry-demo">
+            <div class="voter-face">👤</div>
+            <div class="voter-info">
+              <div class="vi-id">UWY2485118</div>
+              <div class="vi-line">नाम: गौरव कुमार सैनी</div>
+              <div class="vi-line">पिता का नाम: मांगे राम</div>
+              <div class="vi-line">मकान संख्या: 00 | आयु: 21</div>
+              <div class="vi-line">लिंग: पुरुष</div>
+            </div>
+          </div>
+          <div class="voter-entry-demo">
+            <div class="voter-face">👤</div>
+            <div class="voter-info">
+              <div class="vi-id">UWY2485027</div>
+              <div class="vi-line">नाम: भावना सैनी</div>
+              <div class="vi-line">पिता का नाम: मांगे राम सैनी</div>
+              <div class="vi-line">मकान संख्या: 00 | आयु: 19</div>
+              <div class="vi-line">लिंग: महिला</div>
+            </div>
+          </div>
+          <div class="analyzing">ANALYZING DEVANAGARI...</div>
+        </div>
+      </div>
+      <div class="demo-output">
+        <div class="demo-label">
+          <span>OUTPUT FORMAT</span>
+          <span class="badge">482 ROWS</span>
+        </div>
+        <div class="demo-content">
+          <table class="excel-table">
+            <thead>
+              <tr><th>ID</th><th>नाम (Hindi)</th><th>Age</th><th>House</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>UWY2485118</td><td>गौरव कुमार</td><td>21</td><td>00</td></tr>
+              <tr><td>UWY2485027</td><td>भावना सैनी</td><td>19</td><td>00</td></tr>
+              <tr><td>UP/84/417</td><td>विशाल</td><td>58</td><td>1</td></tr>
+              <tr><td>UWY2467496</td><td>सुधा</td><td>53</td><td>1</td></tr>
+              <tr><td>GBY2991891</td><td>सुनील</td><td>49</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <button class="dl-btn">⬇ Download Structured Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Built Specifically for Election Candidates</div>
+    <h2 class="section-title reveal">Every Feature You Need to Win</h2>
+    <p class="section-sub reveal">Empowering modern campaigns with specialized AI tools designed to handle the complexity of Indian electoral rolls with 100% data sovereignty.</p>
+
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <div class="feat-icon">🔤</div>
+        <div class="feat-title">Accurate Devanagari OCR</div>
+        <div class="feat-body">Proprietary neural networks specifically trained for complex Hindi ligatures and regional character variations found in standard electoral PDF documents.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✍️</div>
+        <div class="feat-title">Handwritten Numbers</div>
+        <div class="feat-body">Automatically identify and extract mobile numbers written in the margins by booth level agents. Never lose a lead from physical notes again.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📷</div>
+        <div class="feat-title">Auto-Photo Crop</div>
+        <div class="feat-body">Individual voter passport photos are automatically detected, cropped, and indexed by Voter ID for personalized campaign material generation.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Advanced Filters</div>
+        <div class="feat-body">Segment your electorate by ward, caste indicators, religion, or house number. Perfect for targeted door-to-door campaigning and Booth Management.</div>
+      </div>
+      <div class="feat-card highlight">
+        <div class="feat-icon">💻</div>
+        <div class="feat-title">100% Offline Mode</div>
+        <div class="feat-body">Run the entire extraction process locally on your machine. No data ever leaves your laptop, ensuring 100% security and privacy for your voter lists.</div>
+      </div>
+      <div class="feat-card highlight">
+        <div class="feat-icon">💰</div>
+        <div class="feat-title">Massive Savings</div>
+        <div class="feat-body">Near zero cost compared to the manual data entry costs of ₹4 Lakh per constituency. Save thousands of man-hours and eliminate human errors entirely.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal" style="text-align:center">Pricing</div>
+    <h2 class="section-title reveal" style="text-align:center">Simple, Transparent Pricing</h2>
+    <p class="section-sub reveal" style="text-align:center;margin:0 auto 48px">No hidden servers. No monthly subscriptions. Just clean, actionable electoral data when you need it.</p>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card popular">
+        <div class="price-badge pop">POPULAR</div>
+        <div class="price-name">Per Constituency</div>
+        <div class="price-desc">Perfect for local leaders and block-level coordinators.</div>
+        <div class="price-amount">₹1,999<span>/one-time</span></div>
+        <div class="price-period">One time fee per constituency</div>
+        <ul class="price-features">
+          <li>OCR Processing for up to 500 Booths</li>
+          <li>Excel/CSV Data Export</li>
+          <li>Voter Migration Insights</li>
+          <li>48-hour delivery SLA</li>
+          <li>Offline delivery via USB</li>
+        </ul>
+        <button class="price-cta orange">Get Started Now</button>
+      </div>
+      <div class="price-card">
+        <div class="price-badge ent">ENTERPRISE</div>
+        <div class="price-name">Full UP Package</div>
+        <div class="price-desc">For major political parties and state-wide campaigns.</div>
+        <div class="price-amount" style="font-size:32px">Custom</div>
+        <div class="price-period">All 403 UP constituencies</div>
+        <ul class="price-features">
+          <li>All 403 Constituencies Covered</li>
+          <li>Dedicated Database Architect</li>
+          <li>Constituency-specific AI models</li>
+          <li>On-premise deployment options</li>
+          <li>Priority Campaign Support</li>
+        </ul>
+        <button class="price-cta outline">Contact Us</button>
+      </div>
+    </div>
+
+    <div class="pricing-note reveal">
+      <span>🔌 Offline Delivery via USB</span>
+      <span>🔒 Secure Encrypted Link</span>
+      <span>🇮🇳 Built for Bharat. Serving Democracy with Data.</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="nav-logo" href="#" style="display:inline-flex;margin-bottom:12px">
+        <div class="nav-logo-icon">M.</div>
+        <div style="margin-left:10px">
+          <div class="nav-logo-text">MatdataAI</div>
+          <div class="nav-logo-sub">BUILT FOR BHARAT 🇮🇳</div>
+        </div>
+      </a>
+      <p>The leading platform for processing Indian electoral documents into actionable intelligence. Bridging the gap between paper and data for a digital Bharat.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#howitworks">How It Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@matdata.ai">hello@matdata.ai</a></li>
+        <li><a href="#">+91 99XXXXXX</a></li>
+        <li><a href="#">New Delhi, India</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 MatdataAI. Built for Bharat.</span>
+    <span>Team Solvers · Central University of Jammu</span>
+  </div>
+</footer>
+<div class="flag-strip"></div>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
