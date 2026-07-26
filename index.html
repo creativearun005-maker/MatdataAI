@@ -605,9 +605,42 @@ footer{
         <div class="step-body">
           <span data-i18n="t36">कुछ फ़ाइलें हैं? सीधे अपलोड करें। 300+ PDF हैं? अपना Google Drive फ़ोल्डर लिंक करें — MatdataAI स्वचालित रूप से फ़ाइलें उठा लेता है। किसी मैन्युअल अपलोड की ज़रूरत नहीं!</span>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-            <button style="background:var(--saffron);color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><span data-i18n="t37">📁 PDF अपलोड करें</span></button>
-            <button style="background:var(--saffron);color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><span data-i18n="t38">🔗 Google Drive लिंक करें</span></button>
-          </div>
+           <input type="file" id="pdfInput" accept="application/pdf" style="display:none" />
+<button id="uploadBtn" style="background:var(--saffron);color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><span data-i18n="t37">📁 PDF अपलोड करें</span></button>
+<button style="background:var(--saffron);color:white;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><span data-i18n="t38">🔗 Google Drive लिंक करें</span></button>
+</div>
+<div id="statusText" style="margin-top:8px;font-size:13px;color:var(--text3)"></div>
+
+<script>
+const API_BASE = "https://matdataai-backend.onrender.com";
+document.getElementById('uploadBtn').onclick = () => document.getElementById('pdfInput').click();
+document.getElementById('pdfInput').onchange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  document.getElementById('statusText').textContent = "AI engine जग रहा है... (पहली request में 1 मिनट लग सकता है)";
+  try {
+    const res = await fetch(`${API_BASE}/api/process`, { method: 'POST', body: formData });
+    const { job_id } = await res.json();
+    const poll = setInterval(async () => {
+      const s = await (await fetch(`${API_BASE}/api/status/${job_id}`)).json();
+      document.getElementById('statusText').textContent = `Status: ${s.status}`;
+      if (s.status === 'done') {
+        clearInterval(poll);
+        document.getElementById('statusText').innerHTML =
+          `✅ Done! <a href="${API_BASE}/api/download/${job_id}" target="_blank">Excel Download करें</a>` +
+          (s.review_path ? ` | <a href="${API_BASE}/api/download/${job_id}/review" target="_blank">Review Sheet Download करें</a>` : '');
+      } else if (s.status === 'failed') {
+        clearInterval(poll);
+        document.getElementById('statusText').textContent = `❌ Failed: ${s.error}`;
+      }
+    }, 5000);
+  } catch (err) {
+    document.getElementById('statusText').textContent = `❌ Error: ${err.message}`;
+  }
+};
+</script>
         </div>
       </div>
       <div class="step">
