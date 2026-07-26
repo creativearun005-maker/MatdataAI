@@ -650,6 +650,128 @@ document.getElementById('pdfInput').onchange = async (e) => {
   }
 };
 </script>
+          <style>
+.mai-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+}
+.mai-modal-box {
+  background: white; border-radius: 16px; padding: 40px 50px;
+  max-width: 500px; width: 90%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  font-family: inherit;
+}
+.mai-modal-box h2 {
+  color: #1a1a2e; font-size: 22px; margin-bottom: 30px; line-height: 1.4;
+}
+.mai-modal-buttons {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;
+}
+.mai-modal-btn {
+  padding: 14px 28px; border: none; border-radius: 10px;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: transform 0.15s;
+}
+.mai-modal-btn:hover { transform: scale(1.05); }
+.mai-btn-yes { background: #2d7a3e; color: white; }
+.mai-btn-no { background: #c0392b; color: white; }
+.mai-btn-option { background: #f0f0f0; color: #1a1a2e; border: 2px solid #ddd; }
+.mai-btn-option.selected { background: var(--saffron); color: white; border-color: var(--saffron); }
+.mai-modal-skip {
+  text-align: right; font-weight: 700; color: #888; cursor: pointer;
+  font-size: 15px; margin-top: 10px;
+}
+.mai-modal-skip:hover { color: var(--saffron); }
+</style>
+
+<script>
+const MAI_STEPS = [
+  {
+    question: "Before converting to Excel<br>Will you help me to customize data according to your need?",
+    type: "yesno",
+  },
+  {
+    question: "You want your data to be sorted based on?",
+    type: "options",
+    options: ["House Number", "Age", "NONE"],
+  },
+  {
+    question: "You want your data to be segregated based on?",
+    type: "options",
+    options: ["Gender", "NONE"],
+  },
+  {
+    question: "Download separate Excel files for separate:-",
+    type: "options",
+    options: ["Gender", "House", "Village"],
+  },
+];
+
+function maiShowCustomizationFlow(onComplete) {
+  let stepIndex = 0;
+
+  function renderStep() {
+    if (stepIndex === 1 && MAI_STEPS[0]._answeredNo) {
+      onComplete();
+      return;
+    }
+    if (stepIndex >= MAI_STEPS.length) {
+      onComplete();
+      return;
+    }
+
+    const step = MAI_STEPS[stepIndex];
+    const overlay = document.createElement('div');
+    overlay.className = 'mai-modal-overlay';
+
+    let buttonsHtml = '';
+    if (step.type === 'yesno') {
+      buttonsHtml = `
+        <button class="mai-modal-btn mai-btn-yes" data-answer="yes">YES</button>
+        <button class="mai-modal-btn mai-btn-no" data-answer="no">NO</button>
+      `;
+    } else {
+      buttonsHtml = step.options.map(opt =>
+        `<button class="mai-modal-btn mai-btn-option" data-answer="${opt}">${opt}</button>`
+      ).join('');
+    }
+
+    overlay.innerHTML = `
+      <div class="mai-modal-box">
+        <h2>${step.question}</h2>
+        <div class="mai-modal-buttons">${buttonsHtml}</div>
+        <div class="mai-modal-skip">&gt;&gt;skip</div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    overlay.querySelectorAll('.mai-modal-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (step.type === 'yesno' && btn.dataset.answer === 'no') {
+          MAI_STEPS[0]._answeredNo = true;
+          overlay.remove();
+          onComplete();
+          return;
+        }
+        btn.classList.add('selected');
+        setTimeout(() => {
+          overlay.remove();
+          stepIndex++;
+          renderStep();
+        }, 300);
+      };
+    });
+
+    overlay.querySelector('.mai-modal-skip').onclick = () => {
+      overlay.remove();
+      onComplete();
+    };
+  }
+
+  renderStep();
+}
+</script>
         </div>
       </div>
       <div class="step">
